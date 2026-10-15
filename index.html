@@ -2,7 +2,7 @@
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, interactive-widget=resizes-visual">
 <title>Julia faz 8 anos — Convite Rapunzel</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,500&family=Great+Vibes&display=swap" rel="stylesheet">
@@ -34,7 +34,7 @@
     inset: 0;
     display: none;
     width: 100%;
-    height: 100%;
+    height: var(--app-h, 100%);
     padding-top: env(safe-area-inset-top, 0px);
     padding-bottom: env(safe-area-inset-bottom, 0px);
     overflow: hidden;
@@ -611,6 +611,28 @@
     butterflyToggle = !butterflyToggle;
     butterflyTimer = setTimeout(flyButterflyOnce, 9500);
   }
+
+/* Teclado aberto (ex.: digitar o nome na confirmação): a cena de fundo NÃO pode encolher.
+   A altura da tela fica travada e só o cartão do formulário se ajusta à área visível. */
+(function(){
+  var root=document.documentElement, vv=window.visualViewport;
+  function editing(){ var a=document.activeElement; return a && /^(INPUT|TEXTAREA|SELECT)$/.test(a.tagName); }
+  function lockH(){ if(!editing()) root.style.setProperty('--app-h', window.innerHeight+'px'); }
+  lockH(); window.addEventListener('resize',lockH); window.addEventListener('orientationchange',function(){setTimeout(lockH,300)});
+  function fitModals(){
+    var full=parseFloat(getComputedStyle(root).getPropertyValue('--app-h'))||window.innerHeight;
+    var kb=vv && editing() && vv.height < full-120;
+    document.querySelectorAll('.modal-layer').forEach(function(l){
+      var c=l.querySelector('.modal-card');
+      if(kb){ l.style.bottom='auto'; l.style.top=vv.offsetTop+'px'; l.style.height=vv.height+'px'; l.style.alignItems='flex-start';
+              if(c) c.style.maxHeight=(vv.height-48)+'px'; }
+      else { l.style.top=l.style.bottom=l.style.height=l.style.alignItems=''; if(c) c.style.maxHeight=''; }
+    });
+  }
+  if(vv){ vv.addEventListener('resize',fitModals); vv.addEventListener('scroll',fitModals); }
+  document.addEventListener('focusin',function(){setTimeout(fitModals,300)});
+  document.addEventListener('focusout',function(){setTimeout(function(){lockH();fitModals()},200)});
+})();
 </script>
 </body>
 </html>
