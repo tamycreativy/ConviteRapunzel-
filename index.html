@@ -40,6 +40,18 @@
     overflow: hidden;
   }
   .screen.active { display: flex; }
+  /* Caixa com a proporção da imagem, centralizada e cobrindo a tela toda (tablet, celular alto, etc.).
+     Botões e brilhos ficam dentro dela e acompanham a imagem. */
+  .screen { container-type: size; }
+  .fit {
+    --bw: max(100cqw, calc(100cqh * var(--ar-w) / var(--ar-h)));
+    --bh: calc(var(--bw) * var(--ar-h) / var(--ar-w));
+    position: absolute; z-index: 0;
+    width: var(--bw); height: var(--bh);
+    left: 50%; margin-left: calc(var(--bw) / -2);
+    top: calc((100cqh - var(--bh)) * var(--py, .5)); /* --py: de que lado cortar quando sobra altura (.5 = igual em cima e embaixo) */
+  }
+  .fit .bg-img { object-fit: fill; object-position: center; }
   .bg-img {
     position: absolute;
     top: 0; left: 0;
@@ -379,11 +391,13 @@
 
   <!-- ===================== CAPA ===================== -->
   <section id="cover" class="screen active">
+    <div class="fit" style="--ar-w:941;--ar-h:1672">
     <img class="bg-img" src="caparapu.png" alt="">
     <div class="lantern-glow" style="left:83%; top:4%;   animation-delay:0s;"></div>
     <div class="lantern-glow" style="left:69%; top:9.5%; animation-delay:1.1s;"></div>
     <div class="lantern-glow" style="left:63%; top:16%;  animation-delay:2.2s;"></div>
     <div class="lantern-glow" style="left:74%; top:20%;  animation-delay:0.6s;"></div>
+    </div>
     <div class="veil"></div>
     <div class="tap-hint">
       <span class="script">Toque para abrir</span>
@@ -399,16 +413,18 @@
 
   <!-- ===================== INFORMAÇÕES ===================== -->
   <section id="info" class="screen">
+    <div class="fit" style="--ar-w:937;--ar-h:1678;--py:.8">
     <img class="bg-img" src="infosrapu.png" alt="">
     <div id="btnConfirmar" class="btn-overlay" onclick="openModal('rsvpModal')"></div>
     <div id="btnLocal" class="btn-overlay" onclick="openModal('localModal')"></div>
     <div id="btnPresentes" class="btn-overlay" onclick="goToPresentes()"></div>
     <div id="btnInfoMore" class="btn-overlay" onclick="openModal('infoModal')"></div>
+    </div>
   </section>
 
   <!-- ===================== PRESENTES (tela cheia) ===================== -->
   <section id="presentesScreen" class="screen">
-    <img class="bg-img" src="dicasrapu.png" alt="">
+    <div class="fit" style="--ar-w:937;--ar-h:1678;--py:.8"><img class="bg-img" src="dicasrapu.png" alt=""></div>
     <button class="back-btn" onclick="backToInfo()">‹ Voltar</button>
   </section>
 
